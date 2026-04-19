@@ -1,0 +1,28 @@
+# Marhaban transcription service — VPS Hostinger deployment.
+# Exposes port 3003 directly (same pattern as WAHA on 3000, video-service on 3001, scraping-toolkit on 3002).
+#
+# Env vars (in .env next to this file):
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY
+#   API_SECRET
+#   WHISPER_MODEL           (optional, default: medium)
+
+services:
+  transcription:
+    build:
+      context: .
+      args:
+        WHISPER_MODEL: ${WHISPER_MODEL:-medium}
+    container_name: marhaban-transcription
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - API_SECRET=${API_SECRET}
+      - WHISPER_MODEL=${WHISPER_MODEL:-medium}
+    # Guardrail: cap memory so medium INT8 transcription can't starve WAHA/
+    # video-service/scraping on the shared 8GB VPS. 4GB is plenty for medium.
+    mem_limit: 4g
+    memswap_limit: 4g
