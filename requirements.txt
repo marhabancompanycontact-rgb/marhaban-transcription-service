@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 faster-whisper==1.1.1
 supabase==2.11.0
 httpx==0.28.1
+requests>=2.31.0
